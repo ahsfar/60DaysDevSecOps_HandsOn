@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "testing"
+
+echo -n "Please enter your name?"
+
+read name
+
+echo  "Welcome" $name
+
+echo -n "Please enter a number above 10"
+
+read num
+compare=10
+
+if [ $num -gt $compare ]
+then
+    echo "You entered the correct number"
+else
+    echo "You entered number less than 10"
+fi

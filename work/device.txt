@@ -1,0 +1,6 @@
+laptop
+mobile
+desktop
+watch
+pad
+tablet
