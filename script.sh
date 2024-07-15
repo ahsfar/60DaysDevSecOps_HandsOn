@@ -1,7 +1,7 @@
 #!/bin/bash
 
-for i in {1..60}; do
-  mkdir "day$i"
-  echo "This is day$i" > "day$i/README.md"
+for i in {1..9}; do
+  mkdir "day0$i"
+  echo "This is day0$i" > "day0$i/README.md"
 done
 
