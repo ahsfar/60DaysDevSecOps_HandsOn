@@ -1,9 +1,0 @@
-this is feature 1 for feature branch.
-
-smth
-
-smth
-
-smth
-
-

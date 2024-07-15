@@ -1,0 +1,20 @@
+Linux
+Git
+Docker 
+Kubernetes
+AWS
+Jenkins
+SonarQube
+Trivy
+OwaspZap
+Ansible 
+Terraform
+ArgoCD
+Prometheus
+Grafana
+Artifactory
+npm
+Splunk
+GitHub Actions
+Projects
+
