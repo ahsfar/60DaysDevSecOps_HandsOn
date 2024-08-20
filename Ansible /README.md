@@ -59,11 +59,63 @@ web_node3
 boston_nodes
 dallas_nodes 
 
+—--
 
-—
+in Playbook {{ansible_variable}}
+
+vi /home/bob/playbooks/playbook.yaml
+
+---
+- name: 'Add nameserver in resolv.conf file on localhost'
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: 'Add nameserver in resolv.conf file'
+      lineinfile:
+        path: /tmp/resolv.conf
+        line: 'nameserver {{  nameserver_ip  }}'
+    - name: 'Disable SNMP Port'
+      firewalld:
+        port: '{{ snmp_port }}'
+        permanent: true
+        state: disabled
+
+---
+- hosts: localhost
+  vars:
+    car_model: 'BMW M3'
+    country_name: USA
+    title: 'Systems Engineer'
+  tasks:
+    - command: 'echo "My car is {{ car_model }}"'
+    - command: 'echo "I live in the {{ country_name }}"'
+    - command: 'echo "I work as a {{ title }}"'
+
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install applications
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "{{ app_list }}"
+
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Set up user
+      user:
+        name: "{{ user_details.username }}"
+        password: "{{ user_details.password }}"
+        comment: "{{ user_details.email }}"
+        state: present
 
 
-# ansible: module:
+
+# module:
 
 
 ---
@@ -141,4 +193,105 @@ ansible-galaxy collection install -r requirements.yml
     - name: Sample Handler
       debug:
         msg: "Handler has been triggered!"
+
+
+# Playbook:
+
+- hosts: all
+  tasks:
+    - name: Set max connections
+      lineinfile:
+        path: /etc/postgresql/12/main/postgresql.conf
+        line: 'max_connections = 500'
+
+    - name: Set listen addresses
+      lineinfile:
+        path: /etc/postgresql/12/main/postgresql.conf
+        line: 'listen_addresses = "*"'
+
+---
+- name: 'Execute two commands on node01'
+  hosts: node01
+  become: yes
+  tasks:
+    - name: 'Execute a date command'
+      command: date
+    - name: 'Task to display hosts file on node01'
+      command: 'cat /etc/hosts'
+- name: 'Execute a command on node02'
+  hosts: node02
+  become: yes
+  tasks:
+    - name: 'Task to display hosts file on node02'
+      command: cat /etc/hosts
+
+# Conditionals:
+
+ansible_os_family
+
+---
+-  name: 'Execute a script on all web server nodes'
+   hosts: all
+   become: yes
+   tasks:
+     -  service: 'name=nginx state=started'
+        when: 'ansible_host=="node02"'
+
+---
+- name: 'Am I an Adult or a Child?'
+  hosts: localhost
+  vars:
+    age: 25
+  tasks:
+    - name: I am a Child
+      command: 'echo "I am a Child"'
+      when: 'age < 18'
+    - name: I am an Adult
+      command: 'echo "I am an Adult"'
+      when: 'age >= 18'
+
+---
+- name: 'Add name server entry if not already entered'
+  hosts: localhost
+  become: yes
+  tasks:
+    - shell: 'cat /etc/resolv.conf'
+      register: command_output
+    - shell: 'echo "nameserver 10.0.250.10" >> /etc/resolv.conf'
+      when: 'command_output.stdout.find("10.0.250.10") == -1'
+
+# Loops:
+
+---
+-  name: 'Print list of fruits'
+   hosts: localhost
+   vars:
+     fruits:
+       - Apple
+       - Banana
+       - Grapes
+       - Orange
+   tasks:
+     - command: 'echo "{{ item }}"'
+       with_items: '{{ fruits }}'
+
+---
+- name: 'Install required packages'
+  hosts: localhost
+  become: yes
+  vars:
+    packages:
+      - httpd
+      - make
+      - vim
+  tasks:
+    - yum:
+        name: '{{ item }}'
+        state: present
+      with_items: '{{ packages }}'
+
+
+
+
+
 
